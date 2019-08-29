@@ -13,6 +13,7 @@ class ThreeEngine {
     static renderer;
     static camera;
     static ui;
+    static alive = true;
 
     start() {
         ThreeEngine.scene = new THREE.Scene();
@@ -22,6 +23,7 @@ class ThreeEngine {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.autoClear = false;
         document.body.appendChild(renderer.domElement);
+        ThreeEngine.alive = true;
         requestAnimationFrame(animate);
         ThreeEngine.ui = new UI();
         ThreeEngine.renderer.render(ThreeEngine.scene, ThreeEngine.camera);
@@ -37,7 +39,7 @@ class ThreeEngine {
     }
 
     stop(){
-        cancelAnimationFrame(animate);
+        ThreeEngine.alive = false;
     }
 
     static getUI(){
@@ -204,26 +206,34 @@ class Cube {
         this.cube.position.x = vec.getX();
         this.cube.position.y = vec.getY();
         this.cube.position.z = vec.getZ();
+        return this;
     }
     setSize(vec) {
         this.cube.scale.x = vec.getX();
         this.cube.scale.y = vec.getY();
         this.cube.scale.z = vec.getZ();
+        return this;
     }
     setRotation(vec) {
         this.cube.rotation.x = vec.getX();
         this.cube.rotation.y = vec.getY();
         this.cube.rotation.z = vec.getZ();
+        return this;
+    }
+    setMaterial(material){
+        this.cube.material = new THREE.MeshBasicMaterial(material);
     }
     translateBy(vec) {
         this.cube.position.x += vec.getX();
         this.cube.position.y += vec.getY();
         this.cube.position.z += vec.getZ();
+        return this;
     }
     rotateBy(vec) {
         this.cube.rotation.x += vec.getX();
         this.cube.rotation.y += vec.getY();
         this.cube.rotation.z += vec.getZ();
+        return this;
     }
     getPosition() {
         return new Vector3D(this.cube.position.x, this.cube.position.y, this.cube.position.z);
@@ -302,8 +312,9 @@ class Text3{
 }
 
 function animate() {
-    requestAnimationFrame(animate);
+    if(ThreeEngine.alive) requestAnimationFrame(animate);
     EventHandler.fireEvent(UpdateEvent, new UpdateEvent());
+    ThreeEngine.getUI().canvas.getContext('2d').clearRect(0, 0, window.innerWidth, window.innerHeight);
     for(var i in GameObjects.getGameObjects()){
         GameObjects.getGameObjects()[i].draw();
     }

@@ -46,8 +46,8 @@ class GameEngine {
             var canvBound = canvas.getBoundingClientRect();
             var x = e.clientX - canvBound.left;
             var y = e.clientY - canvBound.top;
-            if(x < 0 || x > width) return;
-            if(y < 0 || y > height) return;
+            if (x < 0 || x > width) return;
+            if (y < 0 || y > height) return;
             EventHandler.fireEvent(MouseDownEvent, new MouseDownEvent(x, y));
         });
 
@@ -55,8 +55,8 @@ class GameEngine {
             var canvBound = canvas.getBoundingClientRect();
             var x = e.clientX - canvBound.left;
             var y = e.clientY - canvBound.top;
-            if(x < 0 || x > width) return;
-            if(y < 0 || y > height) return;
+            if (x < 0 || x > width) return;
+            if (y < 0 || y > height) return;
             EventHandler.fireEvent(MouseMoveEvent, new MouseMoveEvent(x, y));
         });
 
@@ -200,7 +200,7 @@ class Vector {
  * Create a Rectangle Canvas Object.
  */
 class Rectangle {
-    constructor(){
+    constructor() {
         this.scaleX = 20;
         this.scaleY = 20;
         this.color = "red";
@@ -248,7 +248,7 @@ class Rectangle {
             throw "Rectange position not defined.";
         }
         GameEngine.canvas.fillStyle = this.getColor();
-        GameEngine.canvas.fillRect(this.getPosition().getX() , this.getPosition().getY(), this.getScale().getX(), this.getScale().getY());
+        GameEngine.canvas.fillRect(this.getPosition().getX(), this.getPosition().getY(), this.getScale().getX(), this.getScale().getY());
     }
 }
 
@@ -383,7 +383,7 @@ class GText {
         GameEngine.canvas.font = this.size + " " + this.font;
         GameEngine.canvas.fillStyle = this.color;
         GameEngine.canvas.textAlign = this.textAlign;
-        GameEngine.canvas.fillText(this.text, this.posX , this.posY );
+        GameEngine.canvas.fillText(this.text, this.posX, this.posY);
     }
 }
 
@@ -473,7 +473,7 @@ class Sprite {
     }
 
     draw() {
-        GameEngine.canvas.drawImage(this.image, this.posX , this.posY , this.sizeX, this.sizeY);
+        GameEngine.canvas.drawImage(this.image, this.posX, this.posY, this.sizeX, this.sizeY);
     }
 
 }
@@ -514,8 +514,8 @@ class Line {
 
     draw() {
         GameEngine.canvas.fillStyle = this.getColor();
-        GameEngine.canvas.moveTo(this.getVector1().getX() , this.getVector1().getY());
-        GameEngine.canvas.lineTo(this.getVector2().getX() , this.getVector2().getY());
+        GameEngine.canvas.moveTo(this.getVector1().getX(), this.getVector1().getY());
+        GameEngine.canvas.lineTo(this.getVector2().getX(), this.getVector2().getY());
         GameEngine.canvas.stroke();
     }
 }
@@ -527,7 +527,7 @@ class Sound {
     /**
      * @param {String} src The source sound file.
      */
-    constructor(src){
+    constructor(src) {
         this.sound = document.createElement("audio");
         this.sound.src = src;
         this.sound.setAttribute("preload", "auto");
@@ -536,11 +536,11 @@ class Sound {
         document.appendChild(this.sound);
     }
 
-    play(){
+    play() {
         this.sound.play();
     }
 
-    stop(){
+    stop() {
         this.sound.stop();
     }
 }
@@ -582,17 +582,46 @@ class Collider {
      * @param {*} obj1 The object
      * @param {*} point The point. (Can be array or a vector)
      */
-    static isPointColliding(obj1, point){
+    static isPointColliding(obj1, point) {
         var x = obj1.getPosition().getX();
         var width = obj1.getPosition().getX() + obj1.getScale().getX();
         var y = obj1.getPosition().getY();
         var height = obj1.getPosition().getY() + obj1.getScale().getY();
 
-        if(point instanceof Vector){
+        if (point instanceof Vector) {
             return x <= point.getX() && point.getX() <= width && y <= point.getY() && point.getY() <= height;
-        }else{
+        } else {
             return x <= point[0] && point[0] <= x + width && y <= point[1] && point[1] <= y + height;
         }
+    }
+
+    /**
+     * Returns an array of objects that the object1 is colldiing with if any.
+     * @param {*} obj1 The object
+     * @param {*} list The array of objects.
+     * @returns The list of outputs.
+     */
+    static getCollidingObject(obj1, list) {
+        var output = [];
+        for (let v in list) {
+            if (Collider.isColliding(obj1, list[v])) {
+                output.push(list[v]);
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Detect colliding objects in a list.
+     * @param {*} obj1 
+     * @param {*} list 
+     * @returns If the object is touching one of the objects in the list.
+     */
+    static isCollidingList(obj1, list) {
+        for (let v in list) {
+            if (Collider.isColliding(obj1, list[v])) return true;
+        }
+        return false;
     }
 
     /**
@@ -669,33 +698,33 @@ class UpdateEvent {
 }
 
 class MouseDownEvent {
-    constructor(x, y){
+    constructor(x, y) {
         this.x = x;
         this.y = y;
     }
-    getPosX(){
+    getPosX() {
         return this.x;
     }
-    getPosY(){
+    getPosY() {
         return this.y;
     }
-    getPosition(){
+    getPosition() {
         return new Vector(this.x, this.y);
     }
 }
 
 class MouseMoveEvent {
-    constructor(x, y){
+    constructor(x, y) {
         this.x = x;
         this.y = y;
     }
-    getPosX(){
+    getPosX() {
         return this.x;
     }
-    getPosY(){
+    getPosY() {
         return this.y;
     }
-    getPosition(){
+    getPosition() {
         return new Vector(this.x, this.y);
     }
 }
@@ -730,6 +759,24 @@ class EventHandler {
         for (var i = 0; i < work.length; i++) {
             work[i][1].call(clazz, event);
         }
+    }
+}
+
+class DataHandler {
+    static setData(key, value) {
+        localStorage.setItem(key, value);
+    }
+
+    static getData(key) {
+        return localStorage.getItem(key);
+    }
+
+    static remove(key) {
+        localStorage.removeItem(key);
+    }
+
+    static removeAll() {
+        localStorage.clear();
     }
 }
 

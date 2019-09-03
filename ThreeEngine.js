@@ -4,10 +4,10 @@
 
 */
 
-var oldTime;
+var oldTime = 0;
 
 class ThreeEngine {
-    constructor() {}
+    constructor() { }
 
     static scene;
     static renderer;
@@ -38,11 +38,11 @@ class ThreeEngine {
         });
     }
 
-    stop(){
+    stop() {
         ThreeEngine.alive = false;
     }
 
-    static getUI(){
+    static getUI() {
         return ThreeEngine.ui;
     }
 }
@@ -62,12 +62,12 @@ class Vector3D {
     getZ() {
         return this.z;
     }
-    add(vec, y = 0, z = 0){
-        if(vec instanceof Vector3D){
+    add(vec, y = 0, z = 0) {
+        if (vec instanceof Vector3D) {
             this.x = vec.x;
             this.y = vec.y;
             this.z = vec.z;
-        }else{
+        } else {
             this.x += vec;
             this.y += y;
             this.z += z;
@@ -101,7 +101,7 @@ class Camera {
         ThreeEngine.camera.rotation.y += vec.getY();
         ThreeEngine.camera.rotation.z += vec.getZ();
     }
-    static getRotation(){
+    static getRotation() {
         return new Vector3D(ThreeEngine.camera.rotation.x, ThreeEngine.camera.rotation.y, ThreeEngine.camera.rotation.z);
     }
 }
@@ -110,7 +110,7 @@ class Collider3D {
     static isColliding(obj1, obj2) {
         for (var vertexIndex = 0; vertexIndex < obj1.getMesh().geometry.vertices.length; vertexIndex++) {
             var localVertex = obj1.getMesh().geometry.vertices[vertexIndex].clone();
-            var globalVertex = localVertex.applyMatrix4( obj1.getMesh().matrix );
+            var globalVertex = localVertex.applyMatrix4(obj1.getMesh().matrix);
             var directionVector = globalVertex.sub(obj1.getMesh().position);
 
             var ray = new THREE.Raycaster(obj1.getMesh().position, directionVector.clone().normalize());
@@ -126,10 +126,10 @@ class Collider3D {
      * @param {Object} obj1 
      * @param {Array} list 
      */
-    static isCollidingList(obj1, list){
+    static isCollidingList(obj1, list) {
         for (var vertexIndex = 0; vertexIndex < obj1.getMesh().geometry.vertices.length; vertexIndex++) {
             var localVertex = obj1.getMesh().geometry.vertices[vertexIndex].clone();
-            var globalVertex = localVertex.applyMatrix4( obj1.getMesh().matrix );
+            var globalVertex = localVertex.applyMatrix4(obj1.getMesh().matrix);
             var directionVector = globalVertex.sub(obj1.getMesh().position);
 
             var ray = new THREE.Raycaster(obj1.getMesh().position, directionVector.clone().normalize());
@@ -139,10 +139,25 @@ class Collider3D {
             }
         }
     }
+
+    /**
+     * Returns an array of objects that the object1 is colldiing with if any.
+     * @param {Object} obj1  Object 1
+     * @param {Array} list The list of objects.
+     */
+    static getCollidingObjects(obj1, list) {
+        let output = [];
+        for (let v in list) {
+            if (Collider3D.isColliding(obj1, list[v])) {
+                output.push(list[v]);
+            }
+        }
+        return output;
+    }
 }
 
-class UI{
-    constructor(){
+class UI {
+    constructor() {
         var canvas = document.createElement('canvas');
         this.canvas = canvas;
         this.canvas.width = window.innerWidth;
@@ -157,35 +172,35 @@ class UI{
         this.hudTexture = hudTexture;
         this.hudTexture.minFilter = THREE.LinearFilter;
 
-        var material = new THREE.MeshBasicMaterial( {map: this.hudTexture} );
+        var material = new THREE.MeshBasicMaterial({ map: this.hudTexture });
         material.transparent = true;
 
         var width = window.innerWidth;
         var height = window.innerHeight;
 
         var sceneHUD = new THREE.Scene();
-        var cameraHud = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 0, 30 );
+        var cameraHud = new THREE.OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, 0, 30);
         this.scene = sceneHUD;
         this.camera = cameraHud;
 
         this.material = material;
-        var planeGeometry = new THREE.PlaneGeometry( window.innerWidth, window.innerHeight );
-        var plane = new THREE.Mesh( planeGeometry, this.material );
-        this.scene.add( plane );
+        var planeGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
+        var plane = new THREE.Mesh(planeGeometry, this.material);
+        this.scene.add(plane);
     }
-    draw(){
-        
+    draw() {
+
     }
 }
 
-class Utils3D{
+class Utils3D {
     /**
      * Convert a list of gameobjects to a list of meshes.
      * @param {*} list 
      */
-    static convertGObjecttoMeshList(list){
+    static convertGObjecttoMeshList(list) {
         var output = [];
-        for(var l in list){
+        for (var l in list) {
             output.push(list[l].getMesh());
         }
         return output;
@@ -199,7 +214,6 @@ class Cube {
         this.geom = new THREE.BoxGeometry(vSize.getX(), vSize.getY(), vSize.getZ());
         this.material = new THREE.MeshBasicMaterial(material);
         this.cube = new THREE.Mesh(this.geom, this.material);
-        ThreeEngine.scene.add(this.cube);
     }
 
     setPosition(vec) {
@@ -220,7 +234,7 @@ class Cube {
         this.cube.rotation.z = vec.getZ();
         return this;
     }
-    setMaterial(material){
+    setMaterial(material) {
         this.cube.material = new THREE.MeshBasicMaterial(material);
     }
     translateBy(vec) {
@@ -244,8 +258,18 @@ class Cube {
     getSize() {
         return new Vector3D(this.cube.scale.x, this.cube.scale.y, this.cube.scale.z);
     }
-    getMesh(){
+    getMesh() {
         return this.cube;
+    }
+
+    show() {
+        ThreeEngine.scene.add(this.cube);
+        return this;
+    }
+
+    hide() {
+        ThreeEngine.scene.remove(this.cube);
+        return this;
     }
 }
 
@@ -256,7 +280,6 @@ class Sphere {
         this.geom = new THREE.SphereGeometry(radius, widthSeg, heightSeg);
         this.material = new THREE.MeshBasicMaterial(material);
         this.sphere = new THREE.Mesh(this.geom, this.material);
-        ThreeEngine.scene.add(this.sphere);
     }
 
     setPosition(vec) {
@@ -293,16 +316,24 @@ class Sphere {
     getSize() {
         return new Vector3D(this.sphere.scale.x, this.sphere.scale.y, this.sphere.scale.z);
     }
-    getMesh(){
+    getMesh() {
         return this.sphere;
+    }
+    show() {
+        ThreeEngine.scene.add(this.sphere);
+        return this;
+    }
+    hide() {
+        ThreeEngine.scene.remove(this.sphere);
+        return this;
     }
 }
 
-class Text3{
-    constructor(text = "Default Text", parameters = {color: 0x00FF11}, font = 'fonts/helvetiker_regular.typeface.json'){
+class Text3 {
+    constructor(text = "Default Text", parameters = { color: 0x00FF11 }, font = 'fonts/helvetiker_regular.typeface.json') {
         var loader = new THREE.FontLoader();
         var inst = this;
-        loader.load( font, function ( font ) {
+        loader.load(font, function (font) {
             inst.text = text;
             inst.parameters = parameters;
             inst.geom = new THREE.TextGeometry(inst.text, inst.parameters);
@@ -312,10 +343,10 @@ class Text3{
 }
 
 function animate() {
-    if(ThreeEngine.alive) requestAnimationFrame(animate);
+    if (ThreeEngine.alive) requestAnimationFrame(animate);
     EventHandler.fireEvent(UpdateEvent, new UpdateEvent());
     ThreeEngine.getUI().canvas.getContext('2d').clearRect(0, 0, window.innerWidth, window.innerHeight);
-    for(var i in GameObjects.getGameObjects()){
+    for (var i in GameObjects.getGameObjects()) {
         GameObjects.getGameObjects()[i].draw();
     }
 

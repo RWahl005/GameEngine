@@ -36,10 +36,26 @@ class ThreeEngine {
         window.addEventListener("keyup", function (e) {
             KeyHandler.keysDown.splice(KeyHandler.keysDown.indexOf(e.key), 1);
         });
+        window.addEventListener("mousedown", e => {
+            var canvBound = ThreeEngine.ui.canvas.getBoundingClientRect();
+            var x = e.clientX - canvBound.left;
+            var y = e.clientY - canvBound.top;
+            if (x < 0 || x > GameEngine.width) return;
+            if (y < 0 || y > GameEngine.height) return;
+            EventHandler.fireEvent(MouseDownEvent, new MouseDownEvent(x, y));
+        });
+
+        window.addEventListener("mousemove", e => {
+            var canvBound = ThreeEngine.ui.canvas.getBoundingClientRect();
+            var x = e.clientX - canvBound.left;
+            var y = e.clientY - canvBound.top;
+            if (x < 0 || x > GameEngine.width) return;
+            if (y < 0 || y > GameEngine.height) return;
+            EventHandler.fireEvent(MouseMoveEvent, new MouseMoveEvent(x, y));
+        });
     }
 
     stop() {
-        console.log("called");
         ThreeEngine.alive = false;
     }
 

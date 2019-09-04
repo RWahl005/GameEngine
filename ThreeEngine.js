@@ -39,6 +39,7 @@ class ThreeEngine {
     }
 
     stop() {
+        console.log("called");
         ThreeEngine.alive = false;
     }
 

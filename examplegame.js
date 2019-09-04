@@ -14,8 +14,9 @@ tre.start();
 
 // Create the global objects that will always exist.
 var player = new Sphere(0.5, 10, 10);
-player.setPosition(new Vector3D(0, -1, 0));
+player.setPosition(new Vector3D(0, -1, -2));
 player.show();
+Camera.setPosition(player.getPosition().add(0, 2, 5));
 var ground = new Cube(new Vector3D(10, 1, 500), { color: 0x00FFFF });
 ground.setPosition(new Vector3D(0, -2, -250));
 ground.show();
@@ -361,7 +362,7 @@ function nextStage() {
         trigger.setPosition(new Vector3D(0, 0, -200));
         EventHandler.fireEvent(OnLevelDisplay, new OnLevelDisplay());
     }
-    player.setPosition(new Vector3D(0, -1, 0));
+    player.setPosition(new Vector3D(0, -1, -10));
     Camera.setPosition(player.getPosition().add(0, 2, 5));
 }
 

@@ -1,11 +1,15 @@
 /**
-
-    Runs off three.js
-
+ * Object Based Three.js Game Engine.
+ * Requires Three.js and GameEngine.js to operate.
+ * @author Ryandw11
+ * @version 1.2
 */
 
 var oldTime = 0;
 
+/**
+ * The main ThreeEngine class.
+ */
 class ThreeEngine {
     constructor() { }
 
@@ -15,6 +19,9 @@ class ThreeEngine {
     static ui;
     static alive = true;
 
+    /**
+     * Start the engine.
+     */
     start() {
         ThreeEngine.scene = new THREE.Scene();
         ThreeEngine.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -55,15 +62,24 @@ class ThreeEngine {
         });
     }
 
+    /**
+     * Stop the engine.
+     */
     stop() {
         ThreeEngine.alive = false;
     }
 
+    /**
+     * The UI component.
+     */
     static getUI() {
         return ThreeEngine.ui;
     }
 }
 
+/**
+ * Handle Vector 3D calculations
+ */
 class Vector3D {
     constructor(x, y, z) {
         this.x = x;
@@ -79,11 +95,17 @@ class Vector3D {
     getZ() {
         return this.z;
     }
+    /**
+     * Add a vector or 3 numbers.
+     * @param {*} vec 
+     * @param {*} y 
+     * @param {*} z 
+     */
     add(vec, y = 0, z = 0) {
         if (vec instanceof Vector3D) {
-            this.x = vec.x;
-            this.y = vec.y;
-            this.z = vec.z;
+            this.x += vec.x;
+            this.y += vec.y;
+            this.z += vec.z;
         } else {
             this.x += vec;
             this.y += y;
@@ -91,18 +113,51 @@ class Vector3D {
         }
         return this;
     }
+    /**
+     * Subtract a vector or 3 numbers.
+     * @param {*} vec A vector or number
+     * @param {Number} y A number (not required if a vector is used in first param)
+     * @param {Number} z A number (not required if a vector is used in first param)
+     */
+    subtract(vec, y = 0, z = 0) {
+        if (vec instanceof Vector3D) {
+            this.x -= vec.x;
+            this.y -= vec.y;
+            this.z -= vec.z;
+        } else {
+            this.x -= vec;
+            this.y -= y;
+            this.z -= z;
+        }
+        return this;
+    }
 }
 
+/**
+ * Handles the Game Camera
+ */
 class Camera {
-    static setPosition(vec) {
-        ThreeEngine.camera.position.x = vec.getX();
-        ThreeEngine.camera.position.y = vec.getY();
-        ThreeEngine.camera.position.z = vec.getZ();
+    static setPosition(vec, y=0, z=0) {
+        if(vec instanceof Vector3D){
+            ThreeEngine.camera.position.x = vec.getX();
+            ThreeEngine.camera.position.y = vec.getY();
+            ThreeEngine.camera.position.z = vec.getZ();
+        }else{
+            ThreeEngine.camera.position.x = vec;
+            ThreeEngine.camera.position.y = y;
+            ThreeEngine.camera.position.z = z;
+        }
     }
-    static translateBy(vec) {
-        ThreeEngine.camera.position.x += vec.getX();
-        ThreeEngine.camera.position.y += vec.getY();
-        ThreeEngine.camera.position.z += vec.getZ();
+    static translateBy(vec, y=0, z=0) {
+        if(vec instanceof Vector3D){
+            ThreeEngine.camera.position.x += vec.getX();
+            ThreeEngine.camera.position.y += vec.getY();
+            ThreeEngine.camera.position.z += vec.getZ();
+        }else{
+            ThreeEngine.camera.position.x += vec;
+            ThreeEngine.camera.position.y += y;
+            ThreeEngine.camera.position.z += z;
+        }
     }
     static getPosition() {
         return new Vector3D(ThreeEngine.camera.position.x, ThreeEngine.camera.position.y, ThreeEngine.camera.position.z);
@@ -123,7 +178,15 @@ class Camera {
     }
 }
 
+/**
+ * Handles Collision in a three-dimensonal space.
+ */
 class Collider3D {
+    /**
+     * If an object is colliding with another
+     * @param {*} obj1 object 1
+     * @param {*} obj2 object 2
+     */
     static isColliding(obj1, obj2) {
         for (var vertexIndex = 0; vertexIndex < obj1.getMesh().geometry.vertices.length; vertexIndex++) {
             var localVertex = obj1.getMesh().geometry.vertices[vertexIndex].clone();
@@ -173,6 +236,9 @@ class Collider3D {
     }
 }
 
+/**
+ * Handles the User Interface.
+ */
 class UI {
     constructor() {
         var canvas = document.createElement('canvas');
@@ -224,7 +290,15 @@ class Utils3D {
     }
 }
 
+/**
+ * The cube shape
+ */
 class Cube {
+    /**
+     * Construct the cube.
+     * @param {*} vSize The size of the cube (**required**)
+     * @param {*} material The material used.
+     */
     constructor(vSize, material = {
         color: 0x00ff00
     }) {
@@ -233,10 +307,16 @@ class Cube {
         this.cube = new THREE.Mesh(this.geom, this.material);
     }
 
-    setPosition(vec) {
-        this.cube.position.x = vec.getX();
-        this.cube.position.y = vec.getY();
-        this.cube.position.z = vec.getZ();
+    setPosition(vec, y=0, z=0) {
+        if(vec instanceof Vector3D){
+            this.cube.position.x = vec.getX();
+            this.cube.position.y = vec.getY();
+            this.cube.position.z = vec.getZ();
+        }else{
+            this.cube.position.x = vec;
+            this.cube.position.y = y;
+            this.cube.position.z = z;
+        }
         return this;
     }
     setSize(vec) {
@@ -279,18 +359,34 @@ class Cube {
         return this.cube;
     }
 
+    /**
+     * Display the cube.
+     */
     show() {
         ThreeEngine.scene.add(this.cube);
         return this;
     }
 
+    /**
+     * Hide the cube.
+     */
     hide() {
         ThreeEngine.scene.remove(this.cube);
         return this;
     }
 }
 
+/**
+ * The Sphere object.
+ */
 class Sphere {
+    /**
+     * Construct the sphere (No params are required)
+     * @param {*} radius The radius of the sphere
+     * @param {*} widthSeg The width segmant (Default 32)
+     * @param {*} heightSeg The height segmant (Default 32)
+     * @param {*} material The material
+     */
     constructor(radius = 1, widthSeg = 32, heightSeg = 32, material = {
         color: 0x8E40BC
     }) {
@@ -346,6 +442,9 @@ class Sphere {
     }
 }
 
+/**
+ * Make 3D Text. (Does not work on when in file view.)
+ */
 class Text3 {
     constructor(text = "Default Text", parameters = { color: 0x00FF11 }, font = 'fonts/helvetiker_regular.typeface.json') {
         var loader = new THREE.FontLoader();

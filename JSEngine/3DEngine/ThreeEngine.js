@@ -1,9 +1,11 @@
 /**
  * Object Based Three.js Game Engine.
  * Requires Three.js and GameEngine.js to operate.
- * @author Ryandw11
+ * (This 3D engine was developed at the start of the project.)
+ * @author Ryan
  * @version 1.2
 */
+import {EventHandler, UpdateEvent, GameEngine, GameObjects, MouseDownEvent, MouseMoveEvent, KeyHandler} from '../MainEngine/GameEngine.js';
 
 var oldTime = 0;
 
@@ -74,6 +76,37 @@ class ThreeEngine {
      */
     static getUI() {
         return ThreeEngine.ui;
+    }
+
+    /**
+     * Load data from the scene.
+     * @param {Scene} scene 
+     */
+    setScene(scene){
+        while(ThreeEngine.scene.children.length > 0){ 
+            ThreeEngine.scene.remove(ThreeEngine.scene.children[0]); 
+        }
+        console.log(scene.listOfObjects);
+        for(let i in scene.listOfObjects){
+            ThreeEngine.scene.add(scene.listOfObjects[i].getMesh());
+        }
+        this.currentScene = scene;
+    }
+
+    /**
+     * Get the current scene.
+     */
+    getCurrentScene(){
+        return this.currentScene;
+    }
+    
+    /**
+     * Clear all objects from the game.
+     */
+    clear(){
+        while(ThreeEngine.scene.children.length > 0){ 
+            ThreeEngine.scene.remove(ThreeEngine.scene.children[0]); 
+        }
     }
 }
 

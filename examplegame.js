@@ -4,6 +4,8 @@
  * Developed By: Ryan
  */
 
+ import {ThreeEngine, Sphere, Cube, Camera, Collider3D, Collider, GText, KeyHandler, Vector3D, DataHandler, EventHandler, GameObjects, UpdateEvent} from './JSEngine/JSEngine3D.js';
+
 class OnLevelDisplay{}
 class OnWin{}
 

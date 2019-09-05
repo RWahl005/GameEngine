@@ -6,6 +6,8 @@
  * 
  */
 
+//  import {EventHandler} from '../MainEngine/GameEngine.js';
+
 var oldTime;
 
 /**
@@ -809,3 +811,5 @@ function onGUpdate(e) {
     GameEngine.deltaTime = currentTime - oldTime;
     oldTime = currentTime;
 }
+
+export {GameEngine, GameObjects, Vector, Rectangle, Ellipse, GText, Sprite, Line, Sound, Collider, UpdateEvent, MouseDownEvent, MouseMoveEvent, EventHandler, DataHandler, KeyHandler};

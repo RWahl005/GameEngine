@@ -475,3 +475,5 @@ function animate() {
     GameEngine.deltaTime = currentTime - oldTime;
     oldTime = currentTime;
 }
+
+export {ThreeEngine, Vector3D, Camera, Collider3D, UI, Cube, Sphere, Text3};

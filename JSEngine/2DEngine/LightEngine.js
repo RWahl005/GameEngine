@@ -6,6 +6,8 @@
     @version 1.1
 */
 
+import { GameEngine, EventHandler, UpdateEvent } from '../MainEngine/GameEngine.js';
+
 
 
 /**
@@ -20,7 +22,7 @@ class Light {
      * @param {Number} posY The y position
      * @param {Number} radius The radius of the circle
      */
-    constructor(posX, posY, radius, light = [[0.3, 'rgba(245, 242, 57, 0.5)'], [0.5, 'rgba(190, 190, 80, 0.5)'], [0.9, 'rgba(114, 114, 12, 0.2)']]) {
+    constructor(posX, posY, radius, light = [[0.3, 'rgba(242, 245, 57, 0.5)'], [0.5, 'rgba(190, 190, 80, 0.5)'], [0.9, 'rgba(114, 114, 12, 0.2)']]) {
         this.rad = radius;
         this.x = posX;
         this.y = posY;
@@ -42,7 +44,7 @@ class Light {
         var rnd = 0.05 * Math.sin(1.1 * Date.now() / 1000);
         this.radius = this.radius * (1 + rnd);
         var radialGradient = GameEngine.canvas.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.rad);
-        this.light.forEach(val => radialGradient.addColorStop(val[0] + rnd, val[1]));
+        this.light.forEach(val => { radialGradient.addColorStop(val[0] + rnd, val[1]) });
         // radialGradient.addColorStop(0.3 + rnd, 'rgba(245, 242, 57, 0.5)');
         // radialGradient.addColorStop(0.5 + rnd, 'rgba(190, 190, 80, 0.5)');
         // radialGradient.addColorStop(0.9 + rnd, 'rgba(114, 114, 12, 0.2)');
@@ -114,7 +116,7 @@ class LightEngine {
         LightObjects.lightObjects = [];
     }
 
-    static getShadow(){
+    static getShadow() {
         return LightEngine.shadow;
     }
 }
@@ -137,7 +139,20 @@ class LightObjects {
     }
 }
 
+/**
+ * Premade values for light color.
+ */
+const LightColor = {
+    red: [[0.3, 'rgba(245, 63, 57, 0.5)'], [0.5, 'rgba(252, 101, 96, 0.37)'], [0.9, 'rgba(252, 101, 96, 0.2)']],
+    blue: [[0.3, 'rgba(57, 139, 245, 0.5)'], [0.4, 'rgba(57, 139, 245, 0.3)'], [0.6, 'rgba(57, 139, 245, 0.2)'], [0.9, 'rgba(57, 139, 245, 0.1)']],
+    yellow: [[0.3, 'rgba(242, 245, 57, 0.5)'], [0.5, 'rgba(190, 190, 80, 0.5)'], [0.9, 'rgba(114, 114, 12, 0.2)']],
+    green: [[0.3, 'rgba(57, 245, 57, 0.5)'], [0.4, 'rgba(57, 245, 57, 0.3)'], [0.6, 'rgba(57, 245, 57, 0.2)'], [0.9, 'rgba(57, 245, 57, 0.1)']],
+    purple: [[0.3, 'rgba(200, 95, 248, 0.5)'], [0.5, 'rgba(204, 112, 247, 0.37)'], [0.9, 'rgba(204, 112, 247, 0.2)']]
+}
+
 function update(e) {
     LightEngine.shadow.draw();
     LightObjects.lightObjects.forEach(light => light.draw());
 }
+
+export { Light, LightEngine, LightObjects, Shadow, LightColor };

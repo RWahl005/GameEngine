@@ -103,11 +103,18 @@ class GameEngine {
 
     /**
      * Set the scene.
-     * @param {Scene} scene 
+     * @param {Scene} scene The scene to be rendered
+     * @param {boolean} reset If you want the entire screen to be cleared when the defined scene is loaded.
      */
-    static setScene(scene){
-        GameObjects.clear();
-        for(let i in scene.listOfObjects){
+    static setScene(scene, reset = false) {
+        if (reset)
+            GameObjects.clear();
+        else {
+            for (let i in GameEngine.getCurrentScene().listOfObjects) {
+                GameObjects.remove(GameEngine.getCurrentScene().listOfObjects[i]);
+            }
+        }
+        for (let i in scene.listOfObjects) {
             GameObjects.add(scene.listOfObjects[i]);
         }
         GameEngine.currentScene = scene;
@@ -116,7 +123,7 @@ class GameEngine {
     /**
      * Get the current scene.
      */
-    static getCurrentScene(){
+    static getCurrentScene() {
         return GameEngine.currentScene;
     }
 }
@@ -163,7 +170,7 @@ class GameObjects {
         }
     }
 
-    static clear(){
+    static clear() {
         GameObjects.gameObjectsList = [];
     }
 
@@ -814,4 +821,4 @@ function onGUpdate(e) {
     oldTime = currentTime;
 }
 
-export {GameEngine, GameObjects, Vector, Rectangle, Ellipse, GText, Sprite, Line, Sound, Collider, UpdateEvent, MouseDownEvent, MouseMoveEvent, EventHandler, DataHandler, KeyHandler};
+export { GameEngine, GameObjects, Vector, Rectangle, Ellipse, GText, Sprite, Line, Sound, Collider, UpdateEvent, MouseDownEvent, MouseMoveEvent, EventHandler, DataHandler, KeyHandler };

@@ -20,6 +20,7 @@ class ThreeEngine {
     static camera;
     static ui;
     static alive = true;
+    static lighting = false;
 
     /**
      * Start the engine.
@@ -32,6 +33,7 @@ class ThreeEngine {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.autoClear = false;
         document.body.appendChild(renderer.domElement);
+        this.canvas = renderer.domElement;
         ThreeEngine.alive = true;
         requestAnimationFrame(animate);
         ThreeEngine.ui = new UI();
@@ -76,6 +78,10 @@ class ThreeEngine {
      */
     static getUI() {
         return ThreeEngine.ui;
+    }
+
+    enableLighting(light){
+        ThreeEngine.lighting = light;
     }
 
     /**
@@ -343,7 +349,10 @@ class Cube {
         color: 0x00ff00
     }) {
         this.geom = new THREE.BoxGeometry(vSize.getX(), vSize.getY(), vSize.getZ());
-        this.material = new THREE.MeshBasicMaterial(material);
+        if(!ThreeEngine.lighting)
+            this.material = new THREE.MeshBasicMaterial(material);
+        else
+            this.material = new THREE.MeshPhongMaterial(material);
         this.cube = new THREE.Mesh(this.geom, this.material);
     }
 
@@ -431,7 +440,10 @@ class Sphere {
         color: 0x8E40BC
     }) {
         this.geom = new THREE.SphereGeometry(radius, widthSeg, heightSeg);
-        this.material = new THREE.MeshBasicMaterial(material);
+        if(!ThreeEngine.lighting)
+            this.material = new THREE.MeshBasicMaterial(material);
+        else
+            this.material = new THREE.MeshPhongMaterial(material);
         this.sphere = new THREE.Mesh(this.geom, this.material);
     }
 

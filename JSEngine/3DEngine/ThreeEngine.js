@@ -1,9 +1,11 @@
 /**
  * Object Based Three.js Game Engine.
  * Requires Three.js and GameEngine.js to operate.
- * @author Ryandw11
- * @version 1.2
+ * (This 3D engine was developed at the start of the project.)
+ * @author Ryan
+ * @version 1.3
 */
+import { EventHandler, UpdateEvent, GameEngine, GameObjects, MouseDownEvent, MouseMoveEvent, KeyHandler } from '../MainEngine/GameEngine.js';
 
 var oldTime = 0;
 
@@ -18,6 +20,7 @@ class ThreeEngine {
     static camera;
     static ui;
     static alive = true;
+    static lighting = false;
 
     /**
      * Start the engine.
@@ -30,6 +33,7 @@ class ThreeEngine {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.autoClear = false;
         document.body.appendChild(renderer.domElement);
+        this.canvas = renderer.domElement;
         ThreeEngine.alive = true;
         requestAnimationFrame(animate);
         ThreeEngine.ui = new UI();
@@ -74,6 +78,48 @@ class ThreeEngine {
      */
     static getUI() {
         return ThreeEngine.ui;
+    }
+
+    enableLighting(light){
+        ThreeEngine.lighting = light;
+    }
+
+    /**
+     * Load data from the scene.
+     * @param {Scene} scene The scene to change to.
+     * @param {boolean} reset If all data in the game window should be cleared.
+     */
+    setScene(scene, reset = true) {
+        if (reset) {
+            while (ThreeEngine.scene.children.length > 0) {
+                ThreeEngine.scene.remove(ThreeEngine.scene.children[0]);
+            }
+        }
+        else {
+            for (let i in this.currentScene.listOfObjects) {
+                ThreeEngine.scene.remove(this.currentScene.listOfObjects[i].getMesh());
+            }
+        }
+        for (let i in scene.listOfObjects) {
+            ThreeEngine.scene.add(scene.listOfObjects[i].getMesh());
+        }
+        this.currentScene = scene;
+    }
+
+    /**
+     * Get the current scene.
+     */
+    getCurrentScene() {
+        return this.currentScene;
+    }
+
+    /**
+     * Clear all objects from the game.
+     */
+    clear() {
+        while (ThreeEngine.scene.children.length > 0) {
+            ThreeEngine.scene.remove(ThreeEngine.scene.children[0]);
+        }
     }
 }
 
@@ -137,23 +183,23 @@ class Vector3D {
  * Handles the Game Camera
  */
 class Camera {
-    static setPosition(vec, y=0, z=0) {
-        if(vec instanceof Vector3D){
+    static setPosition(vec, y = 0, z = 0) {
+        if (vec instanceof Vector3D) {
             ThreeEngine.camera.position.x = vec.getX();
             ThreeEngine.camera.position.y = vec.getY();
             ThreeEngine.camera.position.z = vec.getZ();
-        }else{
+        } else {
             ThreeEngine.camera.position.x = vec;
             ThreeEngine.camera.position.y = y;
             ThreeEngine.camera.position.z = z;
         }
     }
-    static translateBy(vec, y=0, z=0) {
-        if(vec instanceof Vector3D){
+    static translateBy(vec, y = 0, z = 0) {
+        if (vec instanceof Vector3D) {
             ThreeEngine.camera.position.x += vec.getX();
             ThreeEngine.camera.position.y += vec.getY();
             ThreeEngine.camera.position.z += vec.getZ();
-        }else{
+        } else {
             ThreeEngine.camera.position.x += vec;
             ThreeEngine.camera.position.y += y;
             ThreeEngine.camera.position.z += z;
@@ -303,16 +349,19 @@ class Cube {
         color: 0x00ff00
     }) {
         this.geom = new THREE.BoxGeometry(vSize.getX(), vSize.getY(), vSize.getZ());
-        this.material = new THREE.MeshBasicMaterial(material);
+        if(!ThreeEngine.lighting)
+            this.material = new THREE.MeshBasicMaterial(material);
+        else
+            this.material = new THREE.MeshPhongMaterial(material);
         this.cube = new THREE.Mesh(this.geom, this.material);
     }
 
-    setPosition(vec, y=0, z=0) {
-        if(vec instanceof Vector3D){
+    setPosition(vec, y = 0, z = 0) {
+        if (vec instanceof Vector3D) {
             this.cube.position.x = vec.getX();
             this.cube.position.y = vec.getY();
             this.cube.position.z = vec.getZ();
-        }else{
+        } else {
             this.cube.position.x = vec;
             this.cube.position.y = y;
             this.cube.position.z = z;
@@ -391,7 +440,10 @@ class Sphere {
         color: 0x8E40BC
     }) {
         this.geom = new THREE.SphereGeometry(radius, widthSeg, heightSeg);
-        this.material = new THREE.MeshBasicMaterial(material);
+        if(!ThreeEngine.lighting)
+            this.material = new THREE.MeshBasicMaterial(material);
+        else
+            this.material = new THREE.MeshPhongMaterial(material);
         this.sphere = new THREE.Mesh(this.geom, this.material);
     }
 
@@ -443,16 +495,17 @@ class Sphere {
 }
 
 /**
- * Make 3D Text. (Does not work on when in file view.)
+ * Make 3D Text.
+ * @deprecated No longer in use. Do not use.
  */
 class Text3 {
-    constructor(text = "Default Text", parameters = { color: 0x00FF11 }, font = 'fonts/helvetiker_regular.typeface.json') {
+    constructor(text = "Default Text", parameters = { color: 0x00FF11 }, font = '../Fonts/helvetiker_regular.typeface.json') {
         var loader = new THREE.FontLoader();
         var inst = this;
         loader.load(font, function (font) {
             inst.text = text;
             inst.parameters = parameters;
-            inst.geom = new THREE.TextGeometry(inst.text, inst.parameters);
+            inst.geom = new THREE.TextGeometry(inst.text, { font: font, size: 80 });
             ThreeEngine.add(inst.geom);
         });
     }
@@ -475,3 +528,5 @@ function animate() {
     GameEngine.deltaTime = currentTime - oldTime;
     oldTime = currentTime;
 }
+
+export { ThreeEngine, Vector3D, Camera, Collider3D, UI, Cube, Sphere };

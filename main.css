@@ -1,0 +1,14 @@
+h1{
+    text-align: center;
+}
+p{
+    text-align: center;
+}
+
+a{
+    color: rgb(113, 113, 243);
+}
+
+a:hover{
+    color: rgb(192, 192, 248);
+}

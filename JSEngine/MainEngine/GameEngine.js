@@ -12,9 +12,11 @@ var oldTime;
  * The main class of the GameEngine
  */
 class GameEngine {
-    static canvas = document.getElementById("game").getContext("2d");
+    // static canvas = document.getElementById("game").getContext("2d");
+    static canvas;
     static background;
     static offset = 0;
+    static currentScene;
 
     /**
      * Start the game
@@ -27,6 +29,7 @@ class GameEngine {
         canvas.height = height;
         this.width = width;
         this.height = height;
+        this.canvas = canvas.getContext("2d");
         setInterval(function () {
             EventHandler.fireEvent(UpdateEvent, new UpdateEvent());
         }, time);
@@ -90,34 +93,38 @@ class GameEngine {
      */
     static deltaTime = 0;
 
-    /**
-     * Enable a Game Engine addon. (Load it).  
-     * Note: Loads after your script loads.
-     * @param addon The addon you want to enable.
-     * @param callback An optional callback function to be called when the script is loaded.
-     */
-    static enableAddon(addon, callback = null) {
-        if (addon.includes(".js")) {
-            var script = document.createElement("script");
-            script.src = addon;
-            document.body.appendChild(script);
-            if (callback != null)
-                script.addEventListener("load", callback);
-        } else {
-            var script = document.createElement("script");
-            script.src = addon + ".js";
-            document.body.appendChild(script);
-            if (callback != null)
-                script.addEventListener("load", callback);
-        }
-    }
-
     static disable(clearScreen = false) {
         if (clearScreen) {
             GameEngine.canvas.clearRect(0, 0, document.getElementById("game").width, document.getElementById("game").height);
         }
 
         EventHandler.handlers = [];
+    }
+
+    /**
+     * Set the scene.
+     * @param {Scene} scene The scene to be rendered
+     * @param {boolean} reset If you want the entire screen to be cleared when the defined scene is loaded.
+     */
+    static setScene(scene, reset = false) {
+        if (reset)
+            GameObjects.clear();
+        else {
+            for (let i in GameEngine.getCurrentScene().listOfObjects) {
+                GameObjects.remove(GameEngine.getCurrentScene().listOfObjects[i]);
+            }
+        }
+        for (let i in scene.listOfObjects) {
+            GameObjects.add(scene.listOfObjects[i]);
+        }
+        GameEngine.currentScene = scene;
+    }
+
+    /**
+     * Get the current scene.
+     */
+    static getCurrentScene() {
+        return GameEngine.currentScene;
     }
 }
 
@@ -161,6 +168,10 @@ class GameObjects {
                 GameObjects.remove(GameObjects.gameObjectsList[i]);
             }
         }
+    }
+
+    static clear() {
+        GameObjects.gameObjectsList = [];
     }
 
     /**
@@ -809,3 +820,5 @@ function onGUpdate(e) {
     GameEngine.deltaTime = currentTime - oldTime;
     oldTime = currentTime;
 }
+
+export { GameEngine, GameObjects, Vector, Rectangle, Ellipse, GText, Sprite, Line, Sound, Collider, UpdateEvent, MouseDownEvent, MouseMoveEvent, EventHandler, DataHandler, KeyHandler };

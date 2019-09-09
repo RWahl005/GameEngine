@@ -1,4 +1,4 @@
-import * as je from '../JSEngine/JSEngine3D.js';
+import * as je from '../node_modules/rjsengine/JSEngine3D.js';
 
 /**
     Demonstrates the possiblity of scenes in a 3-Dimensonal space.

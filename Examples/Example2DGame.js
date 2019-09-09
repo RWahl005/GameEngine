@@ -1,5 +1,5 @@
 // import {GameEngine, EventHandler, Rectangle, UpdateEvent, GText, KeyHandler, Collider, GameObjects} from '/JSEngine/GameEngine.js';
-import {GameEngine, EventHandler, Rectangle, UpdateEvent, GText, KeyHandler, Collider, GameObjects} from '../JSEngine/JSEngine2D.js';
+import { GameEngine, EventHandler, Rectangle, UpdateEvent, GText, KeyHandler, Collider, GameObjects } from '../node_modules/rjsengine/JSEngine2D.js';
 
 /**
  * An example game made using the GameEngine.

@@ -4,11 +4,11 @@
  * Developed By: Ryan
  */
 
- import {ThreeEngine, Sphere, Cube, Camera, Collider3D, Collider, GText, KeyHandler, Vector3D} from '../JSEngine/JSEngine3D.js';
- import {DataHandler, EventHandler, GameObjects, UpdateEvent, GameEngine, Rectangle, MouseDownEvent} from '../JSEngine/JSEngine3D.js';
+import { ThreeEngine, Sphere, Cube, Camera, Collider3D, Collider, GText, KeyHandler, Vector3D } from '../node_modules/rjsengine/JSEngine3D.js';
+import { DataHandler, EventHandler, GameObjects, UpdateEvent, GameEngine, Rectangle, MouseDownEvent } from '../node_modules/rjsengine/JSEngine3D.js';
 
-class OnLevelDisplay{}
-class OnWin{}
+class OnLevelDisplay { }
+class OnWin { }
 
 // Create the instance of the ThreeEngine
 const tre = new ThreeEngine();
@@ -32,7 +32,7 @@ wall2.show();
 
 var youWin = new GText("You Win!");
 youWin.setColor("white");
-youWin.setPosition(window.innerWidth/2, window.innerHeight/2);
+youWin.setPosition(window.innerWidth / 2, window.innerHeight / 2);
 
 // Handles game states.
 const gameStates = {
@@ -71,20 +71,20 @@ new Cube(new Vector3D(2, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(3.
 new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(-3.5, -1, -110))]],
 [
     [new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -70)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -100)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -130)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -160)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -200)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -220)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -230)),
-        new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -250))],
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -100)),
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -130)),
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -160)),
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -200)),
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -220)),
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(2, -1, -230)),
+    new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -250))],
     [new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(0, -1, -50)),
-        new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(0, -1, -145))]
+    new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(0, -1, -145))]
 ],
 [
     [new Cube(new Vector3D(6, 2, 2), { color: 0xFF0000 }).setPosition(new Vector3D(-2, -1, -70))],
     [new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(0, -1, -50)),
-        new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(0, -1, -145))]
+    new Cube(new Vector3D(0.5, 0.5, 0.5), { color: 0xffee00 }).setPosition(new Vector3D(0, -1, -145))]
 ]];
 
 // The trigger object. This invisable object detects if the player collides with it.
@@ -288,25 +288,25 @@ EventHandler.registerHandler(OnLevelDisplay, e => {
     finishedLevel = false;
 });
 EventHandler.registerHandler(UpdateEvent, e => {
-    if(gameState != gameStates.Waiting) return;
+    if (gameState != gameStates.Waiting) return;
     levelTime += e.getDeltaTime() / 1000;
-    if(stringDisplayed.length != stringUsed.length && !finishedLevel){
-        if(levelTime >= 0.1){
+    if (stringDisplayed.length != stringUsed.length && !finishedLevel) {
+        if (levelTime >= 0.1) {
             stringDisplayed += stringUsed[currentIndex];
             lvl.setText(stringDisplayed);
             currentIndex++;
             levelTime = 0;
-            if(stringDisplayed.length == stringUsed.length){
+            if (stringDisplayed.length == stringUsed.length) {
                 finishedLevel = true;
             }
         }
-    }else{
-        if(stringDisplayed.length == stringUsed.length && levelTime > 1.5){
+    } else {
+        if (stringDisplayed.length == stringUsed.length && levelTime > 1.5) {
             console.log(levelTime);
             stringDisplayed = stringDisplayed.slice(0, -1);
             lvl.setText(stringDisplayed);
             levelTime = 0;
-        }else if(stringDisplayed.length != stringUsed.length && levelTime >= 0.1){
+        } else if (stringDisplayed.length != stringUsed.length && levelTime >= 0.1) {
             stringDisplayed = stringDisplayed.slice(0, -1);
             lvl.setText(stringDisplayed);
             levelTime = 0;
@@ -331,7 +331,7 @@ function nextStage() {
         scoreCount = 0;
         levelNum += 1;
         gameState = gameStates.Waiting;
-        if(levelNum > 3){
+        if (levelNum > 3) {
             gameState = gameStates.Won;
             EventHandler.fireEvent(OnWin, new OnWin());
             return;
@@ -345,7 +345,7 @@ function nextStage() {
         trigger.setPosition(new Vector3D(0, 0, -200));
         EventHandler.fireEvent(OnLevelDisplay, new OnLevelDisplay());
         DataHandler.setData("levelNum", levelNum);
-        
+
     }
     else if (gameState === gameStates.GameOver) {
         scoreCount = 0;
@@ -372,18 +372,18 @@ function nextStage() {
 /*
     Handles when the player finishes the game.
 */
-EventHandler.registerHandler(OnWin, e =>{
+EventHandler.registerHandler(OnWin, e => {
     GameObjects.removeType(GText);
     GameObjects.removeType(GText);
     GameObjects.add(youWin);
     var resetGame = new Rectangle();
-    resetGame.setColor("green").setPosition(window.innerWidth/2 - 70, 400).setScale(150, 100);
+    resetGame.setColor("green").setPosition(window.innerWidth / 2 - 70, 400).setScale(150, 100);
     GameObjects.add(resetGame);
     GameObjects.add(new GText("Replay Game").setColor("white").setSize("20px").setPosition(resetGame.getPosition().getX() + 65, resetGame.getPosition().getY() + 50))
     player.setPosition(new Vector3D(0, -1, -50));
     Camera.setPosition(player.getPosition().add(0, 2, -200));
-    EventHandler.registerHandler(MouseDownEvent, e =>{
-        if(Collider.isPointColliding(resetGame, e.getPosition())){
+    EventHandler.registerHandler(MouseDownEvent, e => {
+        if (Collider.isPointColliding(resetGame, e.getPosition())) {
             DataHandler.remove("levelNum");
             location.reload();
         }

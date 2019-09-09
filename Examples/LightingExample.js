@@ -1,4 +1,4 @@
-import * as jsgame from '../JSEngine/JSEngine2D.js';
+import * as jsgame from '../node_modules/rjsengine/JSEngine2D.js';
 
 /**
  * This example shows off the lighting engine of the JSGameEngine.
